@@ -8,9 +8,8 @@
 namespace Core\Util;
 
 use Core\Application\Application;
+use Core\Collection\Collection;
 use Core\Config\Config;
-use Core\Exception\CoreException;
-use Core\Util\FileUtil;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -26,10 +25,10 @@ class LoggerUtil
 
     /**
      * @param $loggerName
-     * @param Config $config
+     * @param Collection $config
      * @return mixed
      */
-    public static function getLogger($loggerName, Config $config = null) {
+    public static function getLogger($loggerName, Collection $config = null) {
         if (!array_key_exists($loggerName, static::$logger)) {
             static::$logger[$loggerName] = static::createLogger($loggerName, $config);
         }
@@ -38,7 +37,7 @@ class LoggerUtil
 
 
 
-    public static function createLogger($loggerName, Config $config = null) {
+    public static function createLogger($loggerName, Collection $config = null) {
         $basePath = Application::getInstance()->getBasePath();
         $logger = new Logger($loggerName);
         $logger->pushProcessor(new UidProcessor(7));

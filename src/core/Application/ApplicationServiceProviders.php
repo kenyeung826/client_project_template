@@ -10,7 +10,7 @@ use Core\Database\Connection;
 class ApplicationServiceProviders {
     
     public function register($container){
-        $container['logger'] = $this->getLogger($container);
+        $container['logger'] = $this->getLogger();
         $this->loadDB($container);
     }
 
@@ -18,10 +18,16 @@ class ApplicationServiceProviders {
      * @param Container $container
      * @return \Closure
      */
-    public function getLogger($container) {
-        $config = $container->get('config');
-        $loggerFunc = function(Container $container) use ($config){
-            return LoggerUtil::getLogger("default", $config);
+    public function getLogger() {
+        $loggerFunc = function(Container $container){
+            try {
+                $config = $container->get('settings');
+
+                return LoggerUtil::getLogger("default", $config);
+            } catch (\Exception $e) {
+                print_r($e->getTraceAsString());
+            }
+
         };
         return $loggerFunc;
     }
