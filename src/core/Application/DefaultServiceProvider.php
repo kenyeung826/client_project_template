@@ -7,7 +7,15 @@ use Core\Http\Request;
 use Core\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\CallableResolver;
+use Slim\Handlers\Error;
+use Slim\Handlers\NotAllowed;
+use Slim\Handlers\NotFound;
+use Slim\Handlers\PhpError;
+use Slim\Handlers\Strategies\RequestResponse;
+use Slim\Http\Environment;
 use Slim\Http\Headers;
+use Slim\Router;
 
 class DefaultServiceProvider extends \Slim\DefaultServicesProvider
 {
@@ -16,6 +24,9 @@ class DefaultServiceProvider extends \Slim\DefaultServicesProvider
      */
     public function register($container) {
 
+        $container['environment'] = function () {
+            return new Environment($_SERVER);
+        };
         /**
          * @param Container $container
          *
@@ -37,19 +48,6 @@ class DefaultServiceProvider extends \Slim\DefaultServicesProvider
         };
 
 
-        /**
-        if (!isset($container['notFoundHandler'])) {
-            $container['notFoundHandler'] = function () use ($container) {
-                return new NotFoundHandler($container['hook_emitter']);
-            };
-        }
-
-        if (!isset($container['notAllowedHandler'])) {
-            $container['notAllowedHandler'] = function () use ($container) {
-                return new MethodNotAllowedHandler($container['hook_emitter']);
-            };
-        }
-**/
         parent::register($container);
     }
 

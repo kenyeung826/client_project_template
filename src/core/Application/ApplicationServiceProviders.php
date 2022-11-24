@@ -3,7 +3,11 @@ namespace Core\Application;
 
 
 
+use Core\Hook\Emitter;
+use Core\Hook\Payload;
+use Core\Permission\Acl;
 use Core\Util\ArrayUtil;
+use Core\Util\ErrorUtil;
 use Core\Util\LoggerUtil;
 use Core\Database\Connection;
 
@@ -12,10 +16,10 @@ class ApplicationServiceProviders {
     public function register($container){
         $container['logger'] = $this->getLogger();
         $this->loadDB($container);
+        $container['hook_emitter'] = $this->getEmitter();
     }
 
     /**
-     * @param Container $container
      * @return \Closure
      */
     public function getLogger() {
@@ -67,6 +71,26 @@ class ApplicationServiceProviders {
         };
         return $dbFunc;
 
+    }
+
+    public function getEmitter() {
+        return function (Container $container) {
+            $emitter = new Emitter();
+            $emitter->addAction('application.error', function($e) use ($container) {
+                $logger = $container->get('logger');
+                $logger->error(ErrorUtil::normalize($e));
+            });
+
+            $emitter->addFilter('response', function (Payload $payload) use ($container) {
+                /** @var Acl $acl */
+                $acl = $container->get('acl');
+                if ($acl->isPublic() || !$acl->getUserId()) {
+                    $payload->set('public', true);
+                }
+                return $payload;
+            });
+            return $emitter;
+        };
     }
 
 }

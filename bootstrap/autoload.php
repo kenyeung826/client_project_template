@@ -40,7 +40,6 @@ date_default_timezone_set($timezone);
 
 $app = null;
 try {
-
     $defaultSettings = \Core\Application\Schema::get($basePath)->value([]);
     $app = new \Core\Application\Application([
         "settings" => $defaultSettings,

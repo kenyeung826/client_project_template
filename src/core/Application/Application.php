@@ -50,7 +50,7 @@ class Application extends App {
 
         $globalConfigPath = $configPath . "/env" ;
 
-        $this->loadConfiguration($configPath, $appConfig);
+        $this->loadConfiguration($globalConfigPath, $appConfig);
 
         $envConfigPath = $globalConfigPath . '/' . ENV;
 
@@ -70,8 +70,10 @@ class Application extends App {
         $settings = &$appConfig['settings'];
 
         if (file_exists($configPath)) {
+
             $files = scandir($configPath);
             foreach ($files as $file) {
+
                 $filePath = $configPath . "/" . $file;
                 $pointer = &$config;
                 if (strpos($file, "settings") !== false ) {

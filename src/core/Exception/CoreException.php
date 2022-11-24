@@ -10,6 +10,19 @@ namespace Core\Exception;
 
 class CoreException extends \Exception
 {
+    const ERROR_CODE = 0;
+
+    protected $attributes = [];
+
+    public function getErrorCode()
+    {
+        return static::ERROR_CODE;
+    }
+
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
 
     public function getStatusCode() {
         return 500;
